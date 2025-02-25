@@ -1,14 +1,18 @@
-package com.example.market;
-
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import java.util.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
 public class MarketController {
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
+
+    public MarketController(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     // 🌍 Fetch Global Market Data
     @GetMapping("/global")
@@ -53,5 +57,14 @@ public class MarketController {
         double indianScore = indianData.values().stream().mapToDouble(Double::doubleValue).average().orElse(0) * 100;
 
         return Map.of("Global Sentiment", globalScore, "Indian Market Health", indianScore);
+    }
+}
+
+// ✅ Configuration Class for RestTemplate
+@Configuration
+class AppConfig {
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }
